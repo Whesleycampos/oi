@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Everyday Conversation - Verbo To Be</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #72EDF2 10%, #5151E5 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 500px;
+            max-width: 95%;
+            padding: 25px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .flag {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 24px;
+        }
+
+        .flag-left {
+            left: 0;
+        }
+
+        .flag-right {
+            right: 0;
+        }
+
+        .title {
+            font-size: 22px;
+            color: #333;
+            margin: 0 40px;
+        }
+
+        .subtitle {
+            font-size: 16px;
+            color: #666;
+            margin: 5px 0 0;
+        }
+
+        .game-status {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 20px 0;
+        }
+
+        .question-section {
+            margin: 25px 0;
+        }
+
+        .question {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .button {
+            background: #4a69bd;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 15px;
+            margin: 8px 0;
+            font-size: 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .button:hover {
+            background: #3f5ca8;
+            transform: translateY(-2px);
+        }
+
+        #results {
+            display: none;
+        }
+
+        .result-card {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+
+        .error-card {
+            border-left: 4px solid #ff4757;
+        }
+
+        .success-card {
+            border-left: 4px solid #2ed573;
+        }
+
+        .explanation {
+            background: #fff;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            color: #333;
+            line-height: 1.5;
+            font-weight: bold;
+        }
+
+        .results-header {
+            text-align: center;
+            font-size: 24px;
+            margin: 20px 0;
+            color: #333;
+            text-transform: uppercase;
+        }
+
+        .section-title {
+            font-size: 20px;
+            margin: 25px 0 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f1f2f6;
+        }
+
+        .restart-button {
+            background: #2ed573;
+            margin-top: 30px;
+        }
+
+        .restart-button:hover {
+            background: #26af5f;
+        }
+
+        #chart {
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
+        }
+        
+        .question-review {
+            background: #f8f9fa;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+        }
+
+        .question-review.error {
+            border-left: 4px solid #ff4757;
+        }
+
+        .question-review.correct {
+            border-left: 4px solid #2ed573;
+        }
+
+        .question-text {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .explanation {
+            font-size: 16px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="game">
+        <div class="header">
+            <span class="flag flag-left">🇺🇸</span>
+            <h1 class="title">Curso Everyday Conversation</h1>
+            <p class="subtitle">Master the Verb "To Be"</p>
+            <span class="flag flag-right">🇧🇷</span>
+        </div>
+
+        <div class="game-status">
+            <div id="lives">❤️❤️❤️</div>
+            <div id="progress">Pergunta 1 de 15</div>
+            <div id="score">Pontuação: 0</div>
+        </div>
+
+        <div class="question-section">
+            <div class="question">
+                <span class="student-icon">👨‍🎓</span>
+                <span id="question-text"></span>
+            </div>
+            <button class="button" onclick="answer('am')">am</button>
+            <button class="button" onclick="answer('is')">is</button>
+            <button class="button" onclick="answer('are')">are</button>
+        </div>
+    </div>
+
+    <div class="container" id="results">
+        <div class="header">
+            <span class="flag flag-left">🇺🇸</span>
+            <h1 class="title">Resultado Final</h1>
+            <p class="subtitle">Veja seu desempenho</p>
+            <span class="flag flag-right">🇧🇷</span>
+        </div>
+
+        <div class="results-header" id="final-score"></div>
+
+        <canvas id="chart"></canvas>
+
+        <div class="section-title">Revisão das Perguntas</div>
+        <div id="question-review"></div>
+
+        <button class="button restart-button" onclick="restartGame()">Jogar Novamente</button>
+    </div>
+
+    <!-- Coloque os scripts no final do body -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        const questions = [
+            { text: 'Complete: I ___ happy (Eu estou feliz)', answer: 'am', explanation: 'Use "am" para a primeira pessoa do singular (I).' },
+            { text: 'Complete: It ___ a beautiful day (É um dia lindo)', answer: 'is', explanation: 'Use "is" para a terceira pessoa do singular (He, She, It).' },
+            { text: 'Complete: They ___ at work (Eles estão no trabalho)', answer: 'are', explanation: 'Use "are" para todas as pessoas do plural (We, You, They).' },
+            { text: 'Complete: We ___ excited (Nós estamos animados)', answer: 'are', explanation: 'Use "are" para todas as pessoas do plural (We, You, They).' },
+            { text: 'Complete: He ___ a doctor (Ele é médico)', answer: 'is', explanation: 'Use "is" para a terceira pessoa do singular (He, She, It).' },
+            { text: 'Complete: I ___ tired (Eu estou cansado)', answer: 'am', explanation: 'Use "am" para a primeira pessoa do singular (I).' },
+            { text: 'Complete: You ___ amazing (Você é incrível)', answer: 'are', explanation: 'Use "are" para todas as pessoas do plural (We, You, They).' },
+            { text: 'Complete: She ___ intelligent (Ela é inteligente)', answer: 'is', explanation: 'Use "is" para a terceira pessoa do singular (He, She, It).' },
+            { text: 'Complete: I ___ a student (Eu sou um estudante)', answer: 'am', explanation: 'Use "am" para a primeira pessoa do singular (I).' },
+            { text: 'Complete: He ___ tall (Ele é alto)', answer: 'is', explanation: 'Use "is" para a terceira pessoa do singular (He, She, It).' },
+            { text: 'Complete: They ___ happy (Eles estão felizes)', answer: 'are', explanation: 'Use "are" para todas as pessoas do plural (We, You, They).' },
+            { text: 'Complete: We ___ friends (Nós somos amigos)', answer: 'are', explanation: 'Use "are" para todas as pessoas do plural (We, You, They).' },
+            { text: 'Complete: It ___ cold today (Está frio hoje)', answer: 'is', explanation: 'Use "is" para a terceira pessoa do singular (He, She, It).' },
+            { text: 'Complete: You ___ very kind (Você é muito gentil)', answer: 'are', explanation: 'Use "are" para todas as pessoas do plural (We, You, They).' },
+            { text: 'Complete: She ___ my sister (Ela é minha irmã)', answer: 'is', explanation: 'Use "is" para a terceira pessoa do singular (He, She, It).' }
+        ];
+
+        let currentQuestion = 0;
+        let lives = 3;
+        let score = 0;
+        const userAnswers = [];
+
+        function showQuestion() {
+            const questionElement = document.getElementById('question-text');
+            questionElement.textContent = questions[currentQuestion].text;
+        }
+
+        function answer(userAnswer) {
+            userAnswers.push(userAnswer);
+
+            if (userAnswer === questions[currentQuestion].answer) {
+                score++;
+            } else {
+                lives--;
+            }
+
+            currentQuestion++;
+
+            if (lives === 0) {
+                endGame(false);
+            } else if (currentQuestion < questions.length) {
+                updateGameStatus();
+                showQuestion();
+            } else {
+                endGame(true);
+            }
+        }
+
+        function updateGameStatus() {
+            const livesElement = document.getElementById('lives');
+            livesElement.textContent = '❤️'.repeat(lives);
+
+            const progressElement = document.getElementById('progress');
+            progressElement.textContent = `Pergunta ${currentQuestion + 1} de ${questions.length}`;
+
+            const scoreElement = document.getElementById('score');
+            scoreElement.textContent = `Pontuação: ${score}`;
+        }
+
+        function endGame(success) {
+            const gameElement = document.getElementById('game');
+            gameElement.style.display = 'none';
+
+            if (success) {
+                const resultsElement = document.getElementById('results');
+                resultsElement.style.display = 'block';
+                showResults();
+            } else {
+                alert('Game Over! Vamos tentar novamente passar de fase?');
+                restartGame();
+            }
+        }
+
+        function showResults() {
+            const finalScoreElement = document.getElementById('final-score');
+            finalScoreElement.textContent = `Parabéns! Você acertou ${score} de ${questions.length} perguntas.`;
+
+            const ctx = document.getElementById('chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Acertos', 'Erros'],
+                    datasets: [{
+                        data: [score, questions.length - score],
+                        backgroundColor: ['#2ed573', '#ff4757']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        title: {
+                            display: true,
+                            text: 'Desempenho'
+                        }
+                    }
+                }
+            });
+
+            const questionReview = document.getElementById('question-review');
+            questions.forEach((question, index) => {
+                const isCorrect = userAnswers[index] === question.answer;
+                const questionElement = document.createElement('div');
+                questionElement.classList.add('question-review');
+                questionElement.classList.add(isCorrect ? 'correct' : 'error');
+
+                const questionText = document.createElement('div');
+                questionText.classList.add('question-text');
+                questionText.textContent = question.text;
+                questionElement.appendChild(questionText);
+
+                const explanation = document.createElement('div');
+                explanation.classList.add('explanation');
+                explanation.textContent = isCorrect ? 
+                    'Você acertou! Parabéns.' :
+                    `A resposta correta é "${question.answer}". ${question.explanation}`;
+                questionElement.appendChild(explanation);
+
+                questionReview.appendChild(questionElement);
+            });
+        }
+
+        function restartGame() {
+            currentQuestion = 0;
+            lives = 3;
+            score = 0;
+            userAnswers.length = 0;
+
+            const gameElement = document.getElementById('game');
+            gameElement.style.display = 'block';
+
+            const resultsElement = document.getElementById('results');
+            resultsElement.style.display = 'none';
+
+            updateGameStatus();
+            showQuestion();
+        }
+
+        showQuestion();
+    </script>
+</body>
+</html>
